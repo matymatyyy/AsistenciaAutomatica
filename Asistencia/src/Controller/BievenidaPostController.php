@@ -14,7 +14,7 @@ class BievenidaPostController extends AbstractController
     public function marcar(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $lat = $data['lan'] ?? null;
+        $lat = $data['lat'] ?? null;
         $lon = $data['lon'] ?? null;
 
         $campusLat = -34.63799257139449;   // Latitud del campus (ejemplo)
