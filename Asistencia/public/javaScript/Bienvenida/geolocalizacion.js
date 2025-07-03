@@ -1,5 +1,12 @@
 document.getElementById('marcar').addEventListener('click', function () {
+    const procesandoDiv = document.getElementById('procesando');
+    const respuestaDiv = document.getElementById('respuesta');
+
     if ("geolocation" in navigator) {
+        procesandoDiv.classList.remove('d-none');
+        respuestaDiv.classList.add('d-none');
+        respuestaDiv.innerHTML = '';
+
         navigator.geolocation.getCurrentPosition(
             function (pos) {
                 const lat = pos.coords.latitude;
@@ -15,8 +22,6 @@ document.getElementById('marcar').addEventListener('click', function () {
                 })
                     .then(res => res.json())
                     .then(data => {
-                        const respuestaDiv = document.getElementById('respuesta');
-
                         let html = "";
                         if (data.dentro) {
                             html += `<h5 class="text-success">✔ Estás dentro del campus (100m)</h5>`;
@@ -25,24 +30,31 @@ document.getElementById('marcar').addEventListener('click', function () {
                         }
 
                         html += `
-        <p><strong>Tu ubicación:</strong></p>
-        <ul>
-            <li><strong>Latitud:</strong> ${data.lat}</li>
-            <li><strong>Longitud:</strong> ${data.lon}</li>
-        </ul>
-        <p><strong>Ubicación de la escuela:</strong></p>
-        <ul>
-            <li><strong>Latitud:</strong> ${data.campusLat}</li>
-            <li><strong>Longitud:</strong> ${data.campusLon}</li>
-        </ul>
-    `;
+                            <p><strong>Tu ubicación:</strong></p>
+                            <ul>
+                                <li><strong>Latitud:</strong> ${data.lat}</li>
+                                <li><strong>Longitud:</strong> ${data.lon}</li>
+                            </ul>
+                            <p><strong>Ubicación de la escuela:</strong></p>
+                            <ul>
+                                <li><strong>Latitud:</strong> ${data.campusLat}</li>
+                                <li><strong>Longitud:</strong> ${data.campusLon}</li>
+                            </ul>
+                        `;
 
                         respuestaDiv.innerHTML = html;
                         respuestaDiv.classList.remove('d-none');
+                    })
+                    .catch(err => {
+                        alert("Ocurrió un error al enviar los datos: " + err.message);
+                    })
+                    .finally(() => {
+                        procesandoDiv.classList.add('d-none');
                     });
 
             },
             function (err) {
+                procesandoDiv.classList.add('d-none');
                 switch (err.code) {
                     case 1: alert("Permiso denegado"); break;
                     case 2: alert("Posición no disponible"); break;
